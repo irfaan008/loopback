@@ -572,6 +572,17 @@ module.exports = function(User) {
         err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
+
+      UserModel.findById({ where: { email: options.email }}, function(err, accessToken) {
+        if (err) {
+          fn(err);
+        } else if (accessToken) {
+          accessToken.destroy(fn);
+        } else {
+          cb(new Error(g.f('could not find {{accessToken}}')));
+        }
+      });
+
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
       if (UserModel.settings.emailVerificationRequired && !user.emailVerified) {
