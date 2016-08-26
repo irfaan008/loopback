@@ -1151,6 +1151,54 @@ describe('User', function() {
       }
     });
 
+    it('invalidates session when password is reset', function(done) {
+      var email = validCredentialsEmailVerified.email;
+      var password = validCredentialsEmailVerified.password;
+
+      var at1, at2;
+      async.series([
+        function(next) {
+          User.login({ email: email, password: password }, function(err, accessToken1) {
+            if (err) return next(err);
+            assert(accessToken1);
+            at1 = accessToken1;
+            next();
+          });
+        },
+        function(next) {
+          User.login({ email: email, password: password }, function(err, accessToken2) {
+            if (err) return next(err);
+            assert(accessToken2);
+            at2 = accessToken2;
+            next();
+          });
+        },
+        function(next) {
+          var calledBack = false;
+          User.resetPassword({email: email,}, function() {
+            calledBack = true;
+          });
+          User.once('resetPasswordRequest', function(info) {
+          //  assert(!at1);
+            assert(!at2);
+          console.log('at1: ', at1);
+          console.log('at2: ', at2);
+          console.log('info: ', info);
+            assert(info.email);
+            assert(info.accessToken);
+            assert.equal(info.accessToken.ttl / 60, 15);
+            assert(calledBack);
+            next();
+          });
+
+        },
+      ], function(err) {
+        if (err) return done(err);
+        done();
+      });
+    });
+
+
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
       function login(fn) {

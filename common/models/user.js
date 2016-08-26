@@ -574,10 +574,11 @@ module.exports = function(User) {
       }
 
       UserModel.findById({ where: { email: options.email }}, function(err, accessToken) {
+        console.log('main function: ',  options.email, options, accessToken)
         if (err) {
-          fn(err);
+          cb(err);
         } else if (accessToken) {
-          accessToken.destroy(fn);
+          accessToken.destroy();
         } else {
           cb(new Error(g.f('could not find {{accessToken}}')));
         }
