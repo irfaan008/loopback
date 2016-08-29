@@ -585,8 +585,8 @@ module.exports = function(User) {
       var AccessToken = UserModel.relations.accessTokens.modelTo;
       AccessToken.find({where: { userId: user.id}}, function(err, tokens){
         tokens.forEach(function(token) {
-            AccessToken.destroyAll({where: { userId: token.id}}, function() {
-              console.log('Deleted token %s for user ', token.id, token.userId);
+            AccessToken.destroyById(token.id, function(err, info) {
+              if (err) return cb(err);
             });
           });
       })

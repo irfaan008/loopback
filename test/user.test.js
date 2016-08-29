@@ -1155,6 +1155,7 @@ describe('User', function() {
       var email = validCredentialsEmailVerified.email;
       var password = validCredentialsEmailVerified.password;
       var at1, at2;
+      var usersId, tokenPassword;
 
       async.series([
         function(next) {
@@ -1162,6 +1163,7 @@ describe('User', function() {
             if (err) return next(err);
             assert(accessToken1);
             at1 = accessToken1;
+            usersId = accessToken1.userId;
             next();
           });
         },
@@ -1176,15 +1178,25 @@ describe('User', function() {
             calledBack = true;
           });
           User.once('resetPasswordRequest', function(info) {
-            assert(!at1);
-            assert(!at2);
             assert(info.email);
             assert(info.accessToken);
             assert.equal(info.accessToken.ttl / 60, 15);
             assert(calledBack);
+            tokenPassword = info.accessToken.id;
             next();
           });
           });
+        },
+        function(next) {
+            AccessToken.find({where: {userId: usersId}}, function(err, tokens) {
+              if (err) return next (err);
+              //The only AccessToken available is the one from resetting the password
+              //with ttl of 900 seconds.
+              expect(tokens.length).to.equal(1);
+              expect(tokens[0].id).to.equal(tokenPassword);
+              expect(tokens[0].ttl).to.equal(900);
+              next();
+            })
         },
       ], function(err) {
         if (err) return done(err);
