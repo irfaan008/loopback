@@ -1156,7 +1156,7 @@ describe('User', function() {
       var password = validCredentialsEmailVerified.password;
       var at1, at2;
 
-      async.parallel([
+      async.series([
         function(next) {
           User.login({ email: email, password: password }, function(err, accessToken1) {
             if (err) return next(err);
@@ -1176,8 +1176,8 @@ describe('User', function() {
             calledBack = true;
           });
           User.once('resetPasswordRequest', function(info) {
-             assert(!at1);
-             assert(!at2);
+            assert(!at1);
+            assert(!at2);
             assert(info.email);
             assert(info.accessToken);
             assert.equal(info.accessToken.ttl / 60, 15);

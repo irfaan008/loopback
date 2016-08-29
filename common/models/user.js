@@ -582,15 +582,13 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      UserModel.relations.accessTokens.modelTo.find({where: {userId: user.id}}, function(err, accessToken){
-        if (err) {
-          return cb(err);
-        }
-        if (accessToken){
-          accessToken.destroyAll({where: {userId: user.id}}, function(err){
-            if (err) return cb(err);
-          })
-        }
+      var AccessToken = UserModel.relations.accessTokens.modelTo;
+      AccessToken.find({where: { userId: user.id}}, function(err, tokens){
+        tokens.forEach(function(token) {
+            AccessToken.destroyAll({where: { userId: token.id}}, function() {
+              console.log('Deleted token %s for user ', token.id, token.userId);
+            });
+          });
       })
 
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
