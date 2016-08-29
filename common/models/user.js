@@ -583,13 +583,13 @@ module.exports = function(User) {
       }
 
       var AccessToken = UserModel.relations.accessTokens.modelTo;
-      AccessToken.find({where: { userId: user.id}}, function(err, tokens){
+      AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
         tokens.forEach(function(token) {
-            AccessToken.destroyById(token.id, function(err, info) {
-              if (err) return cb(err);
-            });
+          AccessToken.destroyById(token.id, function(err, info) {
+            if (err) return cb(err);
           });
-      })
+        });
+      });
 
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
         if (err) {

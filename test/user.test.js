@@ -1154,7 +1154,7 @@ describe('User', function() {
     it('invalidates session when password is reset', function(done) {
       var email = validCredentialsEmailVerified.email;
       var password = validCredentialsEmailVerified.password;
-      var usersId, tokenPassword;
+      var usersId, tempToken;
 
       async.series([
         function(next) {
@@ -1170,30 +1170,30 @@ describe('User', function() {
             if (err) return next(err);
             assert(accessToken2);
 
-          var calledBack = false;
-          User.resetPassword({email: email,}, function() {
-            calledBack = true;
-          });
-          User.once('resetPasswordRequest', function(info) {
-            assert(info.email);
-            assert(info.accessToken);
-            assert.equal(info.accessToken.ttl / 60, 15);
-            assert(calledBack);
-            tokenPassword = info.accessToken.id;
-            next();
-          });
+            var calledBack = false;
+            User.resetPassword({ email: email }, function() {
+              calledBack = true;
+            });
+            User.once('resetPasswordRequest', function(info) {
+              assert(info.email);
+              assert(info.accessToken);
+              assert.equal(info.accessToken.ttl / 60, 15);
+              assert(calledBack);
+              tempToken = info.accessToken.id;
+              next();
+            });
           });
         },
         function(next) {
-            AccessToken.find({where: {userId: usersId}}, function(err, tokens) {
-              if (err) return next (err);
+          AccessToken.find({ where: { userId: usersId }}, function(err, tokens) {
+            if (err) return next (err);
               //The only AccessToken available is the one from resetting the password
               //with ttl of 900 seconds.
-              expect(tokens.length).to.equal(1);
-              expect(tokens[0].id).to.equal(tokenPassword);
-              expect(tokens[0].ttl).to.equal(900);
-              next();
-            })
+            expect(tokens.length).to.equal(1);
+            expect(tokens[0].id).to.equal(tempToken);
+            expect(tokens[0].ttl).to.equal(900);
+            next();
+          });
         },
       ], function(err) {
         if (err) return done(err);
