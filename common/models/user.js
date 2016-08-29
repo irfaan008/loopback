@@ -573,17 +573,6 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      UserModel.findById({ where: { email: options.email }}, function(err, accessToken) {
-        console.log('main function: ',  options.email, options, accessToken)
-        if (err) {
-          cb(err);
-        } else if (accessToken) {
-          accessToken.destroy();
-        } else {
-          cb(new Error(g.f('could not find {{accessToken}}')));
-        }
-      });
-
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
       if (UserModel.settings.emailVerificationRequired && !user.emailVerified) {
@@ -592,6 +581,17 @@ module.exports = function(User) {
         err.code = 'RESET_FAILED_EMAIL_NOT_VERIFIED';
         return cb(err);
       }
+
+      UserModel.relations.accessTokens.modelTo.find({where: {userId: user.id}}, function(err, accessToken){
+        if (err) {
+          return cb(err);
+        }
+        if (accessToken){
+          accessToken.destroyAll({where: {userId: user.id}}, function(err){
+            if (err) return cb(err);
+          })
+        }
+      })
 
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
         if (err) {
