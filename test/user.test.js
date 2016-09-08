@@ -1201,6 +1201,58 @@ describe('User', function() {
       });
     });
 
+     it('preserves other user sessions if their password is  untouched', function(done) {
+      var user1, user2;
+       async.series([
+         function(next) {
+           User.create({ email: 'user1@example.com', password: 'u1pass' }, function(err, u1) {
+             if (err) return done(err);
+             User.create({ email: 'user2@example.com', password: 'u2pass' }, function(err, u2) {
+               if (err) return done(err);
+               user1 = u1;
+               user2 = u2;
+            //   console.log(user1, user2);
+               next();
+             });
+           });
+         },
+         function(next) {
+           User.login({ email: 'user1@example.com', password: 'u1pass' }, function(err, accessToken1) {
+             User.login({ email: 'user2@example.com', password: 'u2pass' }, function(err, accessToken2) {
+               assert(accessToken1.userId);
+               assert(accessToken2.userId);
+               next();
+             });
+           });
+         },
+         function(next) {
+           User.resetPassword({ email: 'user2@example.com', password: 'u2NewPass'  }, function(err, info) {
+             if (err) return next(err);
+             calledBack = true;
+           });
+           User.once('resetPasswordRequest', function(info) {
+             console.log(info)
+             assert(info.email);
+             assert(info.accessToken);
+             assert.equal(info.accessToken.ttl / 60, 15);
+             next();
+           });
+         },
+         function(next) {
+           AccessToken.find({ where: { userId: user1.id }}, function(err, tokens1) {
+             if (err) return next(err);
+             AccessToken.find({ where: { userId: user2.id }}, function(err, tokens2) {
+               if (err) return next(err);
+                 expect(tokens1.length).to.equal(1);
+                 expect(tokens2.length).to.equal(0);
+                 next();
+             });
+           });
+         },
+       ], function(err) {
+         done();
+       });
+     });
 
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);

@@ -582,14 +582,16 @@ module.exports = function(User) {
         return cb(err);
       }
 
-      var AccessToken = UserModel.relations.accessTokens.modelTo;
-      AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
-        tokens.forEach(function(token) {
-          AccessToken.destroyById(token.id, function(err, info) {
-            if (err) return cb(err);
-          });
-        });
-      });
+      // var AccessToken = UserModel.relations.accessTokens.modelTo;
+      // AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
+      //   tokens.forEach(function(token) {
+      //     AccessToken.destroyById(token.id, function(err, info) {
+      //       if (err) return cb(err);
+      //     });
+      //   });
+      // });
+
+
 
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
         if (err) {
