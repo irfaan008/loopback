@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -21,9 +22,9 @@ describe('remoting - integration', function() {
   describe('app.remotes.options', function() {
     it('should load remoting options', function() {
       var remotes = app.remotes();
-      assert.deepEqual(remotes.options, { 'json': { 'limit': '1kb', 'strict': false },
-        'urlencoded': { 'limit': '8kb', 'extended': true },
-        'errorHandler': { 'debug': true, log: false }});
+      assert.deepEqual(remotes.options, {'json': {'limit': '1kb', 'strict': false},
+        'urlencoded': {'limit': '8kb', 'extended': true},
+        'errorHandler': {'debug': true, log: false}});
     });
 
     it('rest handler', function() {

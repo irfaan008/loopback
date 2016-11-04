@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var async = require('async');
 var path = require('path');
 
@@ -305,7 +306,7 @@ describe('app', function() {
     it('sets req.baseUrl and req.originalUrl', function(done) {
       var reqProps;
       app.middleware('initial', function(req, res, next) {
-        reqProps = { baseUrl: req.baseUrl, originalUrl: req.originalUrl };
+        reqProps = {baseUrl: req.baseUrl, originalUrl: req.originalUrl};
 
         next();
       });
@@ -313,7 +314,7 @@ describe('app', function() {
       executeMiddlewareHandlers(app, '/test/url', function(err) {
         if (err) return done(err);
 
-        expect(reqProps).to.eql({ baseUrl: '', originalUrl: '/test/url' });
+        expect(reqProps).to.eql({baseUrl: '', originalUrl: '/test/url'});
 
         done();
       });
@@ -447,7 +448,7 @@ describe('app', function() {
   describe.onServer('.middlewareFromConfig', function() {
     it('provides API for loading middleware from JSON config', function(done) {
       var steps = [];
-      var expectedConfig = { key: 'value' };
+      var expectedConfig = {key: 'value'};
 
       var handlerFactory = function() {
         var args = Array.prototype.slice.apply(arguments);
@@ -491,7 +492,7 @@ describe('app', function() {
         enabled: true,
         phase: 'routes:before',
         methods: ['get', 'head'],
-        params: { x: 1 },
+        params: {x: 1},
       });
 
       // This should be skipped as the verb doesn't match
@@ -499,7 +500,7 @@ describe('app', function() {
         enabled: true,
         phase: 'routes:before',
         methods: ['post'],
-        params: { x: 2 },
+        params: {x: 2},
       });
 
       executeMiddlewareHandlers(app, function(err) {
@@ -509,7 +510,7 @@ describe('app', function() {
           ['before'],
           [expectedConfig],
           ['after', 2],
-          [{ x: 1 }],
+          [{x: 1}],
         ]);
 
         done();
@@ -620,7 +621,7 @@ describe('app', function() {
     });
 
     it('Expose a `Model` to remote clients', function() {
-      var Color = PersistedModel.extend('color', { name: String });
+      var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
 
@@ -631,11 +632,11 @@ describe('app', function() {
       var Color = PersistedModel.extend('color', { name: String });
       app.model(Color);
       Color.attachTo(db);
-      expect(app.remoteObjects()).to.eql({ color: Color });
+      expect(app.remoteObjects()).to.eql({color: Color});
     });
 
     it('uses singular name as shared class name', function() {
-      var Color = PersistedModel.extend('color', { name: String });
+      var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
       var classes = app.remotes().classes().map(function(c) { return c.name; });
@@ -643,7 +644,7 @@ describe('app', function() {
     });
 
     it('registers existing models to app.models', function() {
-      var Color = db.createModel('color', { name: String });
+      var Color = db.createModel('color', {name: String});
       app.model(Color);
       expect(Color.app).to.be.equal(app);
       expect(Color.shared).to.equal(true);
@@ -652,7 +653,7 @@ describe('app', function() {
     });
 
     it('emits a `modelRemoted` event', function() {
-      var Color = PersistedModel.extend('color', { name: String });
+      var Color = PersistedModel.extend('color', {name: String});
       Color.shared = true;
       var remotedClass;
       app.on('modelRemoted', function(sharedClass) {
@@ -664,7 +665,7 @@ describe('app', function() {
     });
 
     it('emits a `remoteMethodDisabled` event', function() {
-      var Color = PersistedModel.extend('color', { name: String });
+      var Color = PersistedModel.extend('color', {name: String});
       Color.shared = true;
       var remoteMethodDisabledClass, disabledRemoteMethod;
       app.on('remoteMethodDisabled', function(sharedClass, methodName) {
@@ -683,7 +684,7 @@ describe('app', function() {
       app.use(loopback.rest());
       request(app).get('/colors').expect(404, function(err, res) {
         if (err) return done(err);
-        var Color = PersistedModel.extend('color', { name: String });
+        var Color = PersistedModel.extend('color', {name: String});
         app.model(Color);
         Color.attachTo(db);
         request(app).get('/colors').expect(200, done);
@@ -716,7 +717,7 @@ describe('app', function() {
   describe('app.model(ModelCtor, config)', function() {
     it('attaches the model to a datasource', function() {
       var previousModel = loopback.registry.findModel('TestModel');
-      app.dataSource('db', { connector: 'memory' });
+      app.dataSource('db', {connector: 'memory'});
 
       if (previousModel) {
         delete previousModel.dataSource;
@@ -742,7 +743,7 @@ describe('app', function() {
 
   describe('app.dataSources', function() {
     it('is unique per app instance', function() {
-      app.dataSource('ds', { connector: 'memory' });
+      app.dataSource('ds', {connector: 'memory'});
       expect(app.datasources.ds).to.not.equal(undefined);
       var anotherApp = loopback();
       expect(anotherApp.datasources.ds).to.equal(undefined);
@@ -752,7 +753,7 @@ describe('app', function() {
   describe('app.dataSource', function() {
     it('looks up the connector in `app.connectors`', function() {
       app.connector('custom', loopback.Memory);
-      app.dataSource('custom', { connector: 'custom' });
+      app.dataSource('custom', {connector: 'custom'});
       expect(app.dataSources.custom.name).to.equal(loopback.Memory.name);
     });
 
@@ -762,7 +763,7 @@ describe('app', function() {
       });
 
       expect(function() {
-        app.dataSource('bad-ds', { connector: 'throwing' });
+        app.dataSource('bad-ds', {connector: 'throwing'});
       }).to.throw(/bad-ds.*throwing/);
     });
 
@@ -860,11 +861,11 @@ describe('app', function() {
 
     it('auto-configures required models to provided dataSource', function() {
       var AUTH_MODELS = ['User', 'ACL', 'AccessToken', 'Role', 'RoleMapping'];
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
+      var app = loopback({localRegistry: true, loadBuiltinModels: true});
       require('../lib/builtin-models')(app.registry);
-      var db = app.dataSource('db', { connector: 'memory' });
+      var db = app.dataSource('db', {connector: 'memory'});
 
-      app.enableAuth({ dataSource: 'db' });
+      app.enableAuth({dataSource: 'db'});
 
       expect(Object.keys(app.models)).to.include.members(AUTH_MODELS);
 
@@ -876,12 +877,12 @@ describe('app', function() {
     });
 
     it('detects already configured subclass of a required model', function() {
-      var app = loopback({ localRegistry: true, loadBuiltinModels: true });
-      var db = app.dataSource('db', { connector: 'memory' });
-      var Customer = app.registry.createModel('Customer', {}, { base: 'User' });
-      app.model(Customer, { dataSource: 'db' });
+      var app = loopback({localRegistry: true, loadBuiltinModels: true});
+      var db = app.dataSource('db', {connector: 'memory'});
+      var Customer = app.registry.createModel('Customer', {}, {base: 'User'});
+      app.model(Customer, {dataSource: 'db'});
 
-      app.enableAuth({ dataSource: 'db' });
+      app.enableAuth({dataSource: 'db'});
 
       expect(Object.keys(app.models)).to.not.include('User');
     });
@@ -976,15 +977,15 @@ describe('app', function() {
     var app, db;
     beforeEach(function() {
       app = loopback();
-      db = loopback.createDataSource({ connector: loopback.Memory });
+      db = loopback.createDataSource({connector: loopback.Memory});
     });
 
     it.onServer('normalizes the http path', function(done) {
       var UserAccount = PersistedModel.extend(
         'UserAccount',
-        { name: String },
+        {name: String},
         {
-          remoting: { normalizeHttpPath: true },
+          remoting: {normalizeHttpPath: true},
         });
       app.model(UserAccount);
       UserAccount.attachTo(db);

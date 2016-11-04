@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var defineModelTestsWithDataSource = require('./util/model-tests');
 
@@ -88,7 +89,7 @@ describe('RemoteConnector', function() {
 
     ServerModel.setupRemoting();
 
-    var m = new RemoteModel({ foo: 'bar' });
+    var m = new RemoteModel({foo: 'bar'});
     m.save(function(err, inst) {
       if (err) return done(err);
 

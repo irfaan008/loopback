@@ -7,7 +7,8 @@
  * Module Dependencies.
  */
 
-var g = require('../../lib/globalize');
+ 'use strict';
+ var g = require('../../lib/globalize');
 var isEmail = require('isemail');
 var loopback = require('../../lib/loopback');
 var utils = require('../../lib/utils');
@@ -219,7 +220,7 @@ module.exports = function(User) {
       return fn.promise;
     }
 
-    self.findOne({ where: query }, function(err, user) {
+    self.findOne({where: query}, function(err, user) {
       var defaultError = new Error(g.f('login failed'));
       defaultError.statusCode = 401;
       defaultError.code = 'LOGIN_FAILED';
@@ -306,14 +307,14 @@ module.exports = function(User) {
   User.observe('before delete', function(ctx, next) {
     var AccessToken = ctx.Model.relations.accessTokens.modelTo;
     var pkName = ctx.Model.definition.idName() || 'id';
-    ctx.Model.find({ where: ctx.where, fields: [pkName] }, function(err, list) {
+    ctx.Model.find({where: ctx.where, fields: [pkName]}, function(err, list) {
       if (err) return next(err);
 
       var ids = list.map(function(u) { return u[pkName]; });
       ctx.where = {};
-      ctx.where[pkName] = { inq: ids };
+      ctx.where[pkName] = {inq: ids};
 
-      AccessToken.destroyAll({ userId: { inq: ids }}, next);
+      AccessToken.destroyAll({userId: {inq: ids}}, next);
     });
   });
 
@@ -465,7 +466,7 @@ module.exports = function(User) {
         if (err) {
           fn(err);
         } else {
-          fn(null, { email: email, token: user.verificationToken, uid: user.id });
+          fn(null, {email: email, token: user.verificationToken, uid: user.id});
         }
       });
     }
@@ -562,7 +563,7 @@ module.exports = function(User) {
     } catch (err) {
       return cb(err);
     }
-    UserModel.findOne({ where: { email: options.email }}, function(err, user) {
+    UserModel.findOne({where: {email: options.email}}, function(err, user) {
       if (err) {
         return cb(err);
       }
@@ -574,6 +575,7 @@ module.exports = function(User) {
       }
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
+<<<<<<< HEAD
       if (UserModel.settings.emailVerificationRequired && !user.emailVerified) {
         err = new Error(g.f('Email has not been verified'));
         err.statusCode = 401;
@@ -582,6 +584,9 @@ module.exports = function(User) {
       }
 
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
+=======
+      user.accessTokens.create({ttl: ttl}, function(err, accessToken) {
+>>>>>>> 9543be6... Update eslint infrastructure
         if (err) {
           return cb(err);
         }
@@ -708,10 +713,17 @@ module.exports = function(User) {
       {
         description: 'Login a user with username/email and password.',
         accepts: [
+<<<<<<< HEAD
           { arg: 'credentials', type: 'object', required: true, http: { source: 'body' }},
           { arg: 'include', type: ['string'], http: { source: 'query' },
             description: 'Related objects to include in the response. ' +
             'See the description of return value for more details.' },
+=======
+          {arg: 'credentials', type: 'object', required: true, http: {source: 'body'}},
+          {arg: 'include', type: ['string'], http: {source: 'query'},
+            description: g.f('Related objects to include in the response. ' +
+            'See the description of return value for more details.')},
+>>>>>>> 9543be6... Update eslint infrastructure
         ],
         returns: {
           arg: 'accessToken', type: 'object', root: true,
@@ -722,7 +734,7 @@ module.exports = function(User) {
             '  - `user` - `U+007BUserU+007D` - Data of the currently logged in user. ' +
             '{{(`include=user`)}}\n\n'),
         },
-        http: { verb: 'post' },
+        http: {verb: 'post'},
       }
     );
 
@@ -731,7 +743,7 @@ module.exports = function(User) {
       {
         description: 'Logout a user with access token.',
         accepts: [
-          { arg: 'access_token', type: 'string', required: true, http: function(ctx) {
+          {arg: 'access_token', type: 'string', required: true, http: function(ctx) {
             var req = ctx && ctx.req;
             var accessToken = req && req.accessToken;
             var tokenID = accessToken && accessToken.id;
@@ -741,7 +753,7 @@ module.exports = function(User) {
             'from request headers.',
           },
         ],
-        http: { verb: 'all' },
+        http: {verb: 'all'},
       }
     );
 
@@ -750,11 +762,11 @@ module.exports = function(User) {
       {
         description: 'Confirm a user registration with email verification token.',
         accepts: [
-          { arg: 'uid', type: 'string', required: true },
-          { arg: 'token', type: 'string', required: true },
-          { arg: 'redirect', type: 'string' },
+          {arg: 'uid', type: 'string', required: true},
+          {arg: 'token', type: 'string', required: true},
+          {arg: 'redirect', type: 'string'},
         ],
-        http: { verb: 'get', path: '/confirm' },
+        http: {verb: 'get', path: '/confirm'},
       }
     );
 
@@ -763,9 +775,9 @@ module.exports = function(User) {
       {
         description: 'Reset password for a user with email.',
         accepts: [
-          { arg: 'options', type: 'object', required: true, http: { source: 'body' }},
+          {arg: 'options', type: 'object', required: true, http: {source: 'body'}},
         ],
-        http: { verb: 'post', path: '/reset' },
+        http: {verb: 'post', path: '/reset'},
       }
     );
 
@@ -787,6 +799,7 @@ module.exports = function(User) {
     assert(loopback.AccessToken, 'AccessToken model must be defined before User model');
     UserModel.accessToken = loopback.AccessToken;
 
+<<<<<<< HEAD
     UserModel.validate('email', emailValidator, {
       message: g.f('Must provide a valid email'),
     });
@@ -805,6 +818,17 @@ module.exports = function(User) {
       // Regular(Non-realm) users validation
       UserModel.validatesUniquenessOf('email', { message: 'Email already exists' });
       UserModel.validatesUniquenessOf('username', { message: 'User already exists' });
+=======
+    // email validation regex
+    var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    UserModel.validatesFormatOf('email', {with: re, message: g.f('Must provide a valid email')});
+
+    // FIXME: We need to add support for uniqueness of composite keys in juggler
+    if (!(UserModel.settings.realmRequired || UserModel.settings.realmDelimiter)) {
+      UserModel.validatesUniquenessOf('email', {message: 'Email already exists'});
+      UserModel.validatesUniquenessOf('username', {message: 'User already exists'});
+>>>>>>> 9543be6... Update eslint infrastructure
     }
 
     return UserModel;

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 var g = require('../../lib/globalize');
 
 /**
@@ -6,6 +7,8 @@ var g = require('../../lib/globalize');
  * @class KeyValueModel
  * @inherits {Model}
  */
+ 'use strict';
+ var g = require('../../lib/globalize');
 
 module.exports = function(KeyValueModel) {
   /**
@@ -164,34 +167,34 @@ module.exports = function(KeyValueModel) {
     this.remoteMethod('get', {
       accepts: {
         arg: 'key', type: 'string', required: true,
-        http: { source: 'path' },
+        http: {source: 'path'},
       },
-      returns: { arg: 'value', type: 'any', root: true },
-      http: { path: '/:key', verb: 'get' },
-      rest: { after: convertNullToNotFoundError },
+      returns: {arg: 'value', type: 'any', root: true},
+      http: {path: '/:key', verb: 'get'},
+      rest: {after: convertNullToNotFoundError},
     });
 
     this.remoteMethod('set', {
       accepts: [
-        { arg: 'key', type: 'string', required: true,
-          http: { source: 'path' }},
-        { arg: 'value', type: 'any', required: true,
-          http: { source: 'body' }},
-        { arg: 'ttl', type: 'number',
-          http: { source: 'query' },
-          description: 'time to live in milliseconds' },
+        {arg: 'key', type: 'string', required: true,
+          http: {source: 'path'}},
+        {arg: 'value', type: 'any', required: true,
+          http: {source: 'body'}},
+        {arg: 'ttl', type: 'number',
+          http: {source: 'query'},
+          description: 'time to live in milliseconds'},
       ],
-      http: { path: '/:key', verb: 'put' },
+      http: {path: '/:key', verb: 'put'},
     });
 
     this.remoteMethod('expire', {
       accepts: [
-        { arg: 'key', type: 'string', required: true,
-          http: { source: 'path' }},
-        { arg: 'ttl', type: 'number', required: true,
-          http: { source: 'form' }},
+        {arg: 'key', type: 'string', required: true,
+          http: {source: 'path'}},
+        {arg: 'ttl', type: 'number', required: true,
+          http: {source: 'form'}},
       ],
-      http: { path: '/:key/expire', verb: 'put' },
+      http: {path: '/:key/expire', verb: 'put'},
     });
 
     this.remoteMethod('ttl', {

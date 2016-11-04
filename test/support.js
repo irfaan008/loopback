@@ -7,6 +7,7 @@
  * loopback test setup and support.
  */
 
+'use strict';
 assert = require('assert');
 expect = require('chai').expect;
 loopback = require('../');

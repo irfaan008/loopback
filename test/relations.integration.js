@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var loopback = require('../');
 var lt = require('./helpers/loopback-testing-helper');
 var path = require('path');
@@ -31,6 +32,7 @@ describe('relations - integration', function() {
 
   describe('polymorphicHasMany', function() {
     before(function defineProductAndCategoryModels() {
+<<<<<<< HEAD
       var Team = app.registry.createModel('Team', { name: 'string' });
       var Reader = app.registry.createModel('Reader', { name: 'string' });
       var Picture = app.registry.createModel('Picture',
@@ -39,14 +41,34 @@ describe('relations - integration', function() {
       app.model(Team, { dataSource: 'db' });
       app.model(Reader, { dataSource: 'db' });
       app.model(Picture, { dataSource: 'db' });
+=======
+      var Team = app.model(
+        'Team',
+        {properties: {name: 'string'},
+          dataSource: 'db',
+        }
+      );
+      var Reader = app.model(
+        'Reader',
+        {properties: {name: 'string'},
+          dataSource: 'db',
+        }
+      );
+      var Picture = app.model(
+        'Picture',
+        {properties: {name: 'string', imageableId: 'number', imageableType: 'string'},
+          dataSource: 'db',
+        }
+      );
+>>>>>>> 9543be6... Update eslint infrastructure
 
-      Reader.hasMany(Picture, { polymorphic: { // alternative syntax
+      Reader.hasMany(Picture, {polymorphic: { // alternative syntax
         as: 'imageable', // if not set, default to: reference
         foreignKey: 'imageableId', // defaults to 'as + Id'
         discriminator: 'imageableType', // defaults to 'as + Type'
       }});
 
-      Picture.belongsTo('imageable', { polymorphic: {
+      Picture.belongsTo('imageable', {polymorphic: {
         foreignKey: 'imageableId',
         discriminator: 'imageableType',
       }});
@@ -56,18 +78,18 @@ describe('relations - integration', function() {
 
     before(function createEvent(done) {
       var test = this;
-      app.models.Team.create({ name: 'Team 1' },
+      app.models.Team.create({name: 'Team 1'},
         function(err, team) {
           if (err) return done(err);
 
           test.team = team;
-          app.models.Reader.create({ name: 'Reader 1' },
+          app.models.Reader.create({name: 'Reader 1'},
           function(err, reader) {
             if (err) return done(err);
 
             test.reader = reader;
-            reader.pictures.create({ name: 'Picture 1' });
-            reader.pictures.create({ name: 'Picture 2' });
+            reader.pictures.create({name: 'Picture 1'});
+            reader.pictures.create({name: 'Picture 2'});
             reader.team(test.team);
             reader.save(done);
           });
@@ -82,14 +104,14 @@ describe('relations - integration', function() {
     it('includes the related child model', function(done) {
       var url = '/api/readers/' + this.reader.id;
       this.get(url)
-        .query({ 'filter': { 'include': 'pictures' }})
+        .query({'filter': {'include': 'pictures'}})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
           expect(res.body.name).to.be.equal('Reader 1');
           expect(res.body.pictures).to.be.eql([
-            { name: 'Picture 1', id: 1, imageableId: 1, imageableType: 'Reader' },
-            { name: 'Picture 2', id: 2, imageableId: 1, imageableType: 'Reader' },
+            {name: 'Picture 1', id: 1, imageableId: 1, imageableType: 'Reader'},
+            {name: 'Picture 2', id: 2, imageableId: 1, imageableType: 'Reader'},
           ]);
 
           done();
@@ -99,13 +121,13 @@ describe('relations - integration', function() {
     it('includes the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({ 'filter': { 'include': 'imageable' }})
+        .query({'filter': {'include': 'imageable'}})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
-          expect(res.body[0].imageable).to.be.eql({ name: 'Reader 1', id: 1, teamId: 1 });
+          expect(res.body[0].imageable).to.be.eql({name: 'Reader 1', id: 1, teamId: 1});
 
           done();
         });
@@ -114,9 +136,9 @@ describe('relations - integration', function() {
     it('includes related models scoped to the related parent model', function(done) {
       var url = '/api/pictures';
       this.get(url)
-        .query({ 'filter': { 'include': {
+        .query({'filter': {'include': {
           'relation': 'imageable',
-          'scope': { 'include': 'team' },
+          'scope': {'include': 'team'},
         }}})
         .expect(200, function(err, res) {
           if (err) return done(err);
@@ -124,7 +146,7 @@ describe('relations - integration', function() {
           expect(res.body[0].name).to.be.equal('Picture 1');
           expect(res.body[1].name).to.be.equal('Picture 2');
           expect(res.body[0].imageable.name).to.be.eql('Reader 1');
-          expect(res.body[0].imageable.team).to.be.eql({ name: 'Team 1', id: 1 });
+          expect(res.body[0].imageable.team).to.be.eql({name: 'Team 1', id: 1});
 
           done();
         });
@@ -453,7 +475,7 @@ describe('relations - integration', function() {
       });
 
       var NOW = Date.now();
-      var data = { date: new Date(NOW) };
+      var data = {date: new Date(NOW)};
 
       lt.describe.whenCalledRemotely('PUT', '/api/physicians/:id/patients/rel/:fk', data, function() {
         it('should succeed with statusCode 200', function() {
@@ -656,8 +678,14 @@ describe('relations - integration', function() {
 
   describe('hasAndBelongsToMany', function() {
     beforeEach(function defineProductAndCategoryModels() {
+<<<<<<< HEAD
       // Disable "Warning: overriding remoting type product"
       this.app.remotes()._typeRegistry._options.warnWhenOverridingType = false;
+=======
+      var product = app.model(
+        'product',
+        {properties: {id: 'string', name: 'string'}, dataSource: 'db'}
+>>>>>>> 9543be6... Update eslint infrastructure
 
       var product = app.registry.createModel(
          'product',
@@ -665,7 +693,11 @@ describe('relations - integration', function() {
       );
       var category = app.registry.createModel(
         'category',
+<<<<<<< HEAD
         { id: 'string', name: 'string' }
+=======
+        {properties: {id: 'string', name: 'string'}, dataSource: 'db'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(product, { dataSource: 'db' });
       app.model(category, { dataSource: 'db' });
@@ -690,11 +722,11 @@ describe('relations - integration', function() {
     });
 
     beforeEach(function createAnotherCategoryAndProduct(done) {
-      app.models.category.create({ name: 'another-category' },
+      app.models.category.create({name: 'another-category'},
         function(err, cat) {
           if (err) return done(err);
 
-          cat.products.create({ name: 'another-product' }, done);
+          cat.products.create({name: 'another-product'}, done);
         });
     });
 
@@ -783,24 +815,39 @@ describe('relations - integration', function() {
 
   describe('embedsOne', function() {
     before(function defineGroupAndPosterModels() {
+<<<<<<< HEAD
       var group = app.registry.createModel('group',
         { name: 'string' },
         { plural: 'groups' }
+=======
+      var group = app.model(
+        'group',
+        {properties: {name: 'string'},
+          dataSource: 'db',
+          plural: 'groups',
+        }
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(group, { dataSource: 'db' });
 
       var poster = app.registry.createModel(
         'poster',
+<<<<<<< HEAD
         { url: 'string' }
       );
       app.model(poster, { dataSource: 'db' });
 
       group.embedsOne(poster, { as: 'cover' });
+=======
+        {properties: {url: 'string'}, dataSource: 'db'}
+      );
+      group.embedsOne(poster, {as: 'cover'});
+>>>>>>> 9543be6... Update eslint infrastructure
     });
 
     before(function createImage(done) {
       var test = this;
-      app.models.group.create({ name: 'Group 1' },
+      app.models.group.create({name: 'Group 1'},
         function(err, group) {
           if (err) return done(err);
 
@@ -818,10 +865,10 @@ describe('relations - integration', function() {
       var url = '/api/groups/' + this.group.id + '/cover';
 
       this.post(url)
-        .send({ url: 'http://image.url' })
+        .send({url: 'http://image.url'})
         .expect(200, function(err, res) {
           expect(res.body).to.be.eql(
-            { url: 'http://image.url' }
+            {url: 'http://image.url'}
           );
 
           done();
@@ -837,7 +884,7 @@ describe('relations - integration', function() {
 
           expect(res.body.name).to.be.equal('Group 1');
           expect(res.body.poster).to.be.eql(
-            { url: 'http://image.url' }
+            {url: 'http://image.url'}
           );
 
           done();
@@ -852,7 +899,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            { url: 'http://image.url' }
+            {url: 'http://image.url'}
           );
 
           done();
@@ -863,7 +910,7 @@ describe('relations - integration', function() {
       var url = '/api/groups/' + this.group.id + '/cover';
 
       this.put(url)
-        .send({ url: 'http://changed.url' })
+        .send({url: 'http://changed.url'})
         .expect(200, function(err, res) {
           expect(res.body.url).to.be.equal('http://changed.url');
 
@@ -879,7 +926,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            { url: 'http://changed.url' }
+            {url: 'http://changed.url'}
           );
 
           done();
@@ -901,6 +948,7 @@ describe('relations - integration', function() {
     before(function defineProductAndCategoryModels() {
       var todoList = app.registry.createModel(
         'todoList',
+<<<<<<< HEAD
         { name: 'string' },
         { plural: 'todo-lists' }
       );
@@ -913,17 +961,30 @@ describe('relations - integration', function() {
       app.model(todoItem, { dataSource: 'db' });
 
       todoList.embedsMany(todoItem, { as: 'items' });
+=======
+        {properties: {name: 'string'},
+          dataSource: 'db',
+          plural: 'todo-lists',
+        }
+      );
+      var todoItem = app.model('todoItem', {
+        properties: {content: 'string'},
+        forceId: false,
+        dataSource: 'db',
+      });
+      todoList.embedsMany(todoItem, {as: 'items'});
+>>>>>>> 9543be6... Update eslint infrastructure
     });
 
     before(function createTodoList(done) {
       var test = this;
-      app.models.todoList.create({ name: 'List A' },
+      app.models.todoList.create({name: 'List A'},
         function(err, list) {
           if (err) return done(err);
 
           test.todoList = list;
-          list.items.build({ content: 'Todo 1' });
-          list.items.build({ content: 'Todo 2' });
+          list.items.build({content: 'Todo 1'});
+          list.items.build({content: 'Todo 2'});
           list.save(done);
         });
     });
@@ -941,8 +1002,8 @@ describe('relations - integration', function() {
 
           expect(res.body.name).to.be.equal('List A');
           expect(res.body.todoItems).to.be.eql([
-            { content: 'Todo 1', id: 1 },
-            { content: 'Todo 2', id: 2 },
+            {content: 'Todo 1', id: 1},
+            {content: 'Todo 2', id: 2},
           ]);
 
           done();
@@ -957,8 +1018,8 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { content: 'Todo 1', id: 1 },
-            { content: 'Todo 2', id: 2 },
+            {content: 'Todo 1', id: 1},
+            {content: 'Todo 2', id: 2},
           ]);
 
           done();
@@ -974,7 +1035,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { content: 'Todo 2', id: 2 },
+            {content: 'Todo 2', id: 2},
           ]);
 
           done();
@@ -984,10 +1045,10 @@ describe('relations - integration', function() {
     it('creates embedded models', function(done) {
       var url = '/api/todo-lists/' + this.todoList.id + '/items';
 
-      var expected = { content: 'Todo 3', id: 3 };
+      var expected = {content: 'Todo 3', id: 3};
 
       this.post(url)
-        .send({ content: 'Todo 3' })
+        .send({content: 'Todo 3'})
         .expect(200, function(err, res) {
           expect(res.body).to.be.eql(expected);
 
@@ -1003,9 +1064,9 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { content: 'Todo 1', id: 1 },
-            { content: 'Todo 2', id: 2 },
-            { content: 'Todo 3', id: 3 },
+            {content: 'Todo 1', id: 1},
+            {content: 'Todo 2', id: 2},
+            {content: 'Todo 3', id: 3},
           ]);
 
           done();
@@ -1020,7 +1081,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            { content: 'Todo 3', id: 3 }
+            {content: 'Todo 3', id: 3}
           );
 
           done();
@@ -1045,8 +1106,8 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { content: 'Todo 1', id: 1 },
-            { content: 'Todo 3', id: 3 },
+            {content: 'Todo 1', id: 1},
+            {content: 'Todo 3', id: 3},
           ]);
 
           done();
@@ -1089,48 +1150,60 @@ describe('relations - integration', function() {
     before(function defineProductAndCategoryModels() {
       var recipe = app.registry.createModel(
         'recipe',
+<<<<<<< HEAD
         { name: 'string' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(recipe, { dataSource: 'db' });
 
       var ingredient = app.registry.createModel(
         'ingredient',
+<<<<<<< HEAD
        { name: 'string' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(ingredient, { dataSource: 'db' });
 
       var photo = app.registry.createModel(
         'photo',
+<<<<<<< HEAD
         { name: 'string' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(photo, { dataSource: 'db' });
 
       recipe.referencesMany(ingredient);
       // contrived example for test:
-      recipe.hasOne(photo, { as: 'picture', options: {
-        http: { path: 'image' },
+      recipe.hasOne(photo, {as: 'picture', options: {
+        http: {path: 'image'},
       }});
     });
 
     before(function createRecipe(done) {
       var test = this;
-      app.models.recipe.create({ name: 'Recipe' },
+      app.models.recipe.create({name: 'Recipe'},
         function(err, recipe) {
           if (err) return done(err);
 
           test.recipe = recipe;
           recipe.ingredients.create({
-            name: 'Chocolate' },
+            name: 'Chocolate'},
           function(err, ing) {
             test.ingredient1 = ing.id;
-            recipe.picture.create({ name: 'Photo 1' }, done);
+            recipe.picture.create({name: 'Photo 1'}, done);
           });
         });
     });
 
     before(function createIngredient(done) {
       var test = this;
-      app.models.ingredient.create({ name: 'Sugar' }, function(err, ing) {
+      app.models.ingredient.create({name: 'Sugar'}, function(err, ing) {
         test.ingredient2 = ing.id;
 
         done();
@@ -1166,7 +1239,7 @@ describe('relations - integration', function() {
       var test = this;
 
       this.post(url)
-        .send({ name: 'Butter' })
+        .send({name: 'Butter'})
         .expect(200, function(err, res) {
           expect(res.body.name).to.be.eql('Butter');
           test.ingredient3 = res.body.id;
@@ -1184,9 +1257,9 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 },
-            { name: 'Butter', id: test.ingredient3 },
+            {name: 'Chocolate', id: test.ingredient1},
+            {name: 'Sugar', id: test.ingredient2},
+            {name: 'Butter', id: test.ingredient3},
           ]);
 
           done();
@@ -1202,8 +1275,8 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Butter', id: test.ingredient3 },
+            {name: 'Chocolate', id: test.ingredient1},
+            {name: 'Butter', id: test.ingredient3},
           ]);
 
           done();
@@ -1220,7 +1293,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Butter', id: test.ingredient3 },
+            {name: 'Butter', id: test.ingredient3},
           ]);
 
           done();
@@ -1240,8 +1313,8 @@ describe('relations - integration', function() {
             test.ingredient1, test.ingredient3,
           ]);
           expect(res.body.ingredients).to.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Butter', id: test.ingredient3 },
+            {name: 'Chocolate', id: test.ingredient1},
+            {name: 'Butter', id: test.ingredient3},
           ]);
 
           done();
@@ -1258,7 +1331,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql(
-            { name: 'Butter', id: test.ingredient3 }
+            {name: 'Butter', id: test.ingredient3}
           );
 
           done();
@@ -1302,8 +1375,8 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 },
+            {name: 'Chocolate', id: test.ingredient1},
+            {name: 'Sugar', id: test.ingredient2},
           ]);
 
           done();
@@ -1319,7 +1392,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
+            {name: 'Chocolate', id: test.ingredient1},
           ]);
 
           done();
@@ -1334,7 +1407,7 @@ describe('relations - integration', function() {
       this.put(url)
         .expect(200, function(err, res) {
           expect(res.body).to.be.eql(
-            { name: 'Sugar', id: test.ingredient2 }
+            {name: 'Sugar', id: test.ingredient2}
           );
 
           done();
@@ -1350,8 +1423,8 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 },
+            {name: 'Chocolate', id: test.ingredient1},
+            {name: 'Sugar', id: test.ingredient2},
           ]);
 
           done();
@@ -1378,7 +1451,7 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Sugar', id: test.ingredient2 },
+            {name: 'Sugar', id: test.ingredient2},
           ]);
 
           done();
@@ -1394,8 +1467,8 @@ describe('relations - integration', function() {
           if (err) return done(err);
 
           expect(res.body).to.be.eql([
-            { name: 'Chocolate', id: test.ingredient1 },
-            { name: 'Sugar', id: test.ingredient2 },
+            {name: 'Chocolate', id: test.ingredient1},
+            {name: 'Sugar', id: test.ingredient2},
           ]);
 
           done();
@@ -1441,36 +1514,61 @@ describe('relations - integration', function() {
     before(function defineModels() {
       var Book = app.registry.createModel(
         'Book',
+<<<<<<< HEAD
         { name: 'string' },
         { plural: 'books' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db',
+        plural: 'books'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(Book, { dataSource: 'db' });
 
       var Page = app.registry.createModel(
         'Page',
+<<<<<<< HEAD
         { name: 'string' },
         { plural: 'pages' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db',
+        plural: 'pages'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(Page, { dataSource: 'db' });
 
       var Image = app.registry.createModel(
         'Image',
+<<<<<<< HEAD
         { name: 'string' },
         { plural: 'images' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db',
+        plural: 'images'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(Image, { dataSource: 'db' });
 
       var Note = app.registry.createModel(
         'Note',
+<<<<<<< HEAD
         { text: 'string' },
         { plural: 'notes' }
+=======
+        {properties: {text: 'string'}, dataSource: 'db',
+        plural: 'notes'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(Note, { dataSource: 'db' });
 
       var Chapter = app.registry.createModel(
         'Chapter',
+<<<<<<< HEAD
         { name: 'string' },
         { plural: 'chapters' }
+=======
+        {properties: {name: 'string'}, dataSource: 'db',
+          plural: 'chapters'}
+>>>>>>> 9543be6... Update eslint infrastructure
       );
       app.model(Chapter, { dataSource: 'db' });
 
@@ -1485,7 +1583,7 @@ describe('relations - integration', function() {
         throw new Error('This should not crash the app');
       };
 
-      Page.remoteMethod('__throw__errors', { isStatic: false, http: { path: '/throws', verb: 'get' }});
+      Page.remoteMethod('__throw__errors', {isStatic: false, http: {path: '/throws', verb: 'get'}});
 
       Book.nestRemoting('pages');
       Book.nestRemoting('chapters');
@@ -1509,17 +1607,17 @@ describe('relations - integration', function() {
 
     before(function createBook(done) {
       var test = this;
-      app.models.Book.create({ name: 'Book 1' },
+      app.models.Book.create({name: 'Book 1'},
         function(err, book) {
           if (err) return done(err);
 
           test.book = book;
-          book.pages.create({ name: 'Page 1' },
+          book.pages.create({name: 'Page 1'},
           function(err, page) {
             if (err) return done(err);
 
             test.page = page;
-            page.notes.create({ text: 'Page Note 1' },
+            page.notes.create({text: 'Page Note 1'},
             function(err, note) {
               test.note = note;
 
@@ -1531,12 +1629,12 @@ describe('relations - integration', function() {
 
     before(function createChapters(done) {
       var test = this;
-      test.book.chapters.create({ name: 'Chapter 1' },
+      test.book.chapters.create({name: 'Chapter 1'},
         function(err, chapter) {
           if (err) return done(err);
 
           test.chapter = chapter;
-          chapter.notes.create({ text: 'Chapter Note 1' }, function(err, note) {
+          chapter.notes.create({text: 'Chapter Note 1'}, function(err, note) {
             test.cnote = note;
 
             done();
@@ -1546,7 +1644,7 @@ describe('relations - integration', function() {
 
     before(function createCover(done) {
       var test = this;
-      app.models.Image.create({ name: 'Cover 1', book: test.book },
+      app.models.Image.create({name: 'Cover 1', book: test.book},
         function(err, image) {
           if (err) return done(err);
 
@@ -1705,7 +1803,7 @@ describe('relations - integration', function() {
 
     before(function createCustomer(done) {
       var test = this;
-      app.models.customer.create({ name: 'John' }, function(err, c) {
+      app.models.customer.create({name: 'John'}, function(err, c) {
         if (err) return done(err);
 
         cust = c;
@@ -1727,7 +1825,7 @@ describe('relations - integration', function() {
       var url = '/api/customers/' + cust.id + '/profile';
 
       this.post(url)
-        .send({ points: 10 })
+        .send({points: 10})
         .expect(200, function(err, res) {
           if (err) return done(err);
 
@@ -1754,7 +1852,7 @@ describe('relations - integration', function() {
     it('should not create the referenced model twice', function(done) {
       var url = '/api/customers/' + cust.id + '/profile';
       this.post(url)
-        .send({ points: 20 })
+        .send({points: 20})
         .expect(500, function(err, res) {
           done(err);
         });
@@ -1763,7 +1861,7 @@ describe('relations - integration', function() {
     it('should update the referenced model', function(done) {
       var url = '/api/customers/' + cust.id + '/profile';
       this.put(url)
-        .send({ points: 100 })
+        .send({points: 100})
         .expect(200, function(err, res) {
           if (err) return done(err);
 

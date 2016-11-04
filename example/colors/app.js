@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var g = require('../../lib/globalize');
 var loopback = require('../../');
 var app = loopback();
@@ -13,13 +14,19 @@ var schema = {
   name: String,
 };
 
+<<<<<<< HEAD
 app.dataSource('db', { connector: 'memory' });
 var Color = app.registry.createModel('color', schema);
 app.model(Color, { dataSource: 'db' });
+=======
+var Color = app.model('color', schema);
 
-Color.create({ name: 'red' });
-Color.create({ name: 'green' });
-Color.create({ name: 'blue' });
+app.dataSource('db', {adapter: 'memory'}).attach(Color);
+>>>>>>> 9543be6... Update eslint infrastructure
+
+Color.create({name: 'red'});
+Color.create({name: 'green'});
+Color.create({name: 'blue'});
 
 app.listen(3000);
 

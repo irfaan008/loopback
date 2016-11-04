@@ -3,6 +3,7 @@
 // This file is licensed under the MIT License.
 // License text available at https://opensource.org/licenses/MIT
 
+'use strict';
 var assert = require('assert');
 var utils = require('../../lib/utils');
 
@@ -126,7 +127,7 @@ module.exports = function(Application) {
     }
     cb = cb || utils.createPromiseCallback();
 
-    var props = { owner: owner, name: name };
+    var props = {owner: owner, name: name};
     for (var p in options) {
       if (!(p in props)) {
         props[p] = options[p];

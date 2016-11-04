@@ -15,7 +15,8 @@
  * @inherits {Model}
  */
 
-var g = require('../../lib/globalize');
+ 'use strict';
+ var g = require('../../lib/globalize');
 
 module.exports = function(Email) {
   /**
