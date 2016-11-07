@@ -28,16 +28,16 @@ describe('Registry', function() {
       var dsBar = appFoo.dataSource('dsBar', {connector: 'memory'});
 
       var FooModel = appFoo.registry.createModel(modelName, {}, settings);
-      appFoo.model(FooModel, { dataSource: dsFoo });
+      appFoo.model(FooModel, {dataSource: dsFoo});
 
       var FooSubModel = appFoo.registry.createModel(subModelName, {}, settings);
-      appFoo.model(FooSubModel, { dataSource: dsFoo });
+      appFoo.model(FooSubModel, {dataSource: dsFoo});
 
       var BarModel = appBar.registry.createModel(modelName, {}, settings);
-      appBar.model(BarModel, { dataSource: dsBar });
+      appBar.model(BarModel, {dataSource: dsBar});
 
       var BarSubModel = appBar.registry.createModel(subModelName, {}, settings);
-      appBar.model(BarSubModel, { dataSource: dsBar });
+      appBar.model(BarSubModel, {dataSource: dsBar});
 
       FooModel.hasMany(FooSubModel);
       BarModel.hasMany(BarSubModel);

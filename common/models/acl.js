@@ -422,15 +422,8 @@ module.exports = function(ACL) {
     var effectiveACLs = [];
     var staticACLs = self.getStaticACLs(model.modelName, property);
 
-<<<<<<< HEAD
-    this.find({ where: { model: model.modelName, property: propertyQuery,
-      accessType: accessTypeQuery }}, function(err, acls) {
-=======
-    var self = this;
-    var roleModel = registry.getModelByType(Role);
     this.find({where: {model: model.modelName, property: propertyQuery,
       accessType: accessTypeQuery}}, function(err, acls) {
->>>>>>> 9543be6... Update eslint infrastructure
       if (err) {
         if (callback) callback(err);
         return;

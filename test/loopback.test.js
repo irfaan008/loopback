@@ -622,7 +622,7 @@ describe('loopback', function() {
       var Base = app.registry.createModel('Base', {}, {
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -631,7 +631,7 @@ describe('loopback', function() {
         base: 'Base',
         methods: {
           hello: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -645,7 +645,7 @@ describe('loopback', function() {
       var Base = app.registry.createModel('Base', {}, {
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -654,7 +654,7 @@ describe('loopback', function() {
         base: 'Base',
         methods: {
           greet: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -663,13 +663,13 @@ describe('loopback', function() {
       var customMethod = MyCustomModel.sharedClass.findMethodByName('greet');
 
       // Base Method
-      expect(baseMethod.http).to.eql({ path: '/greet' });
+      expect(baseMethod.http).to.eql({path: '/greet'});
       expect(baseMethod.http.path).to.equal('/greet');
       expect(baseMethod.http.path).to.not.equal('/hello');
 
       // Custom Method
       expect(methodNames).to.include('greet');
-      expect(customMethod.http).to.eql({ path: '/hello' });
+      expect(customMethod.http).to.eql({path: '/hello'});
       expect(customMethod.http.path).to.equal('/hello');
       expect(customMethod.http.path).to.not.equal('/greet');
     });
@@ -680,7 +680,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -689,7 +689,7 @@ describe('loopback', function() {
         base: 'Base',
         methods: {
           hello: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -710,7 +710,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           greet: {
-            http: { path: '/greet' },
+            http: {path: '/greet'},
           },
         },
       });
@@ -719,7 +719,7 @@ describe('loopback', function() {
         dataSource: null,
         methods: {
           hello: {
-            http: { path: '/hello' },
+            http: {path: '/hello'},
           },
         },
       });
@@ -732,7 +732,7 @@ describe('loopback', function() {
     });
 
     function setupLoopback() {
-      app = loopback({ localRegistry: true });
+      app = loopback({localRegistry: true});
     }
 
     function getAllMethodNamesWithoutClassName(Model) {

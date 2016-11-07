@@ -17,8 +17,8 @@ describe('RemoteConnector', function() {
       var test = this;
       remoteApp = loopback();
       remoteApp.set('remoting', {
-        errorHandler: { debug: true, log: false },
-        types: { warnWhenOverridingType: false },
+        errorHandler: {debug: true, log: false},
+        types: {warnWhenOverridingType: false},
       });
       remoteApp.use(loopback.rest());
       remoteApp.listen(0, function() {
@@ -56,7 +56,7 @@ describe('RemoteConnector', function() {
     var test = this;
     remoteApp = this.remoteApp = loopback();
     remoteApp.set('remoting', {
-      types: { warnWhenOverridingType: false },
+      types: {warnWhenOverridingType: false},
     });
     remoteApp.use(loopback.rest());
     var ServerModel = this.ServerModel = loopback.PersistedModel.extend('TestModel');

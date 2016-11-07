@@ -32,35 +32,14 @@ describe('relations - integration', function() {
 
   describe('polymorphicHasMany', function() {
     before(function defineProductAndCategoryModels() {
-<<<<<<< HEAD
-      var Team = app.registry.createModel('Team', { name: 'string' });
-      var Reader = app.registry.createModel('Reader', { name: 'string' });
+      var Team = app.registry.createModel('Team', {name: 'string'});
+      var Reader = app.registry.createModel('Reader', {name: 'string'});
       var Picture = app.registry.createModel('Picture',
-        { name: 'string', imageableId: 'number', imageableType: 'string' });
+        {name: 'string', imageableId: 'number', imageableType: 'string'});
 
-      app.model(Team, { dataSource: 'db' });
-      app.model(Reader, { dataSource: 'db' });
-      app.model(Picture, { dataSource: 'db' });
-=======
-      var Team = app.model(
-        'Team',
-        {properties: {name: 'string'},
-          dataSource: 'db',
-        }
-      );
-      var Reader = app.model(
-        'Reader',
-        {properties: {name: 'string'},
-          dataSource: 'db',
-        }
-      );
-      var Picture = app.model(
-        'Picture',
-        {properties: {name: 'string', imageableId: 'number', imageableType: 'string'},
-          dataSource: 'db',
-        }
-      );
->>>>>>> 9543be6... Update eslint infrastructure
+      app.model(Team, {dataSource: 'db'});
+      app.model(Reader, {dataSource: 'db'});
+      app.model(Picture, {dataSource: 'db'});
 
       Reader.hasMany(Picture, {polymorphic: { // alternative syntax
         as: 'imageable', // if not set, default to: reference
@@ -261,7 +240,7 @@ describe('relations - integration', function() {
       it('does not add default properties to request body', function(done) {
         var self = this;
         self.request.put(self.url)
-          .send({ active: true })
+          .send({active: true})
           .end(function(err) {
             if (err) return done(err);
             app.models.Widget.findById(self.widget.id, function(err, w) {
@@ -678,29 +657,19 @@ describe('relations - integration', function() {
 
   describe('hasAndBelongsToMany', function() {
     beforeEach(function defineProductAndCategoryModels() {
-<<<<<<< HEAD
       // Disable "Warning: overriding remoting type product"
       this.app.remotes()._typeRegistry._options.warnWhenOverridingType = false;
-=======
-      var product = app.model(
-        'product',
-        {properties: {id: 'string', name: 'string'}, dataSource: 'db'}
->>>>>>> 9543be6... Update eslint infrastructure
 
       var product = app.registry.createModel(
          'product',
-         { id: 'string', name: 'string' }
+         {id: 'string', name: 'string'}
       );
       var category = app.registry.createModel(
         'category',
-<<<<<<< HEAD
-        { id: 'string', name: 'string' }
-=======
-        {properties: {id: 'string', name: 'string'}, dataSource: 'db'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {id: 'string', name: 'string'}
       );
-      app.model(product, { dataSource: 'db' });
-      app.model(category, { dataSource: 'db' });
+      app.model(product, {dataSource: 'db'});
+      app.model(category, {dataSource: 'db'});
 
       product.hasAndBelongsToMany(category);
       category.hasAndBelongsToMany(product);
@@ -815,34 +784,19 @@ describe('relations - integration', function() {
 
   describe('embedsOne', function() {
     before(function defineGroupAndPosterModels() {
-<<<<<<< HEAD
       var group = app.registry.createModel('group',
-        { name: 'string' },
-        { plural: 'groups' }
-=======
-      var group = app.model(
-        'group',
-        {properties: {name: 'string'},
-          dataSource: 'db',
-          plural: 'groups',
-        }
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'},
+        {plural: 'groups'}
       );
-      app.model(group, { dataSource: 'db' });
+      app.model(group, {dataSource: 'db'});
 
       var poster = app.registry.createModel(
         'poster',
-<<<<<<< HEAD
-        { url: 'string' }
+        {url: 'string'}
       );
-      app.model(poster, { dataSource: 'db' });
+      app.model(poster, {dataSource: 'db'});
 
-      group.embedsOne(poster, { as: 'cover' });
-=======
-        {properties: {url: 'string'}, dataSource: 'db'}
-      );
       group.embedsOne(poster, {as: 'cover'});
->>>>>>> 9543be6... Update eslint infrastructure
     });
 
     before(function createImage(done) {
@@ -948,32 +902,18 @@ describe('relations - integration', function() {
     before(function defineProductAndCategoryModels() {
       var todoList = app.registry.createModel(
         'todoList',
-<<<<<<< HEAD
-        { name: 'string' },
-        { plural: 'todo-lists' }
+        {name: 'string'},
+        {plural: 'todo-lists'}
       );
-      app.model(todoList, { dataSource: 'db' });
+      app.model(todoList, {dataSource: 'db'});
 
       var todoItem = app.registry.createModel(
         'todoItem',
-        { content: 'string' }, { forceId: false }
+        {content: 'string'}, {forceId: false}
       );
-      app.model(todoItem, { dataSource: 'db' });
+      app.model(todoItem, {dataSource: 'db'});
 
-      todoList.embedsMany(todoItem, { as: 'items' });
-=======
-        {properties: {name: 'string'},
-          dataSource: 'db',
-          plural: 'todo-lists',
-        }
-      );
-      var todoItem = app.model('todoItem', {
-        properties: {content: 'string'},
-        forceId: false,
-        dataSource: 'db',
-      });
       todoList.embedsMany(todoItem, {as: 'items'});
->>>>>>> 9543be6... Update eslint infrastructure
     });
 
     before(function createTodoList(done) {
@@ -1150,33 +1090,21 @@ describe('relations - integration', function() {
     before(function defineProductAndCategoryModels() {
       var recipe = app.registry.createModel(
         'recipe',
-<<<<<<< HEAD
-        { name: 'string' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'}
       );
-      app.model(recipe, { dataSource: 'db' });
+      app.model(recipe, {dataSource: 'db'});
 
       var ingredient = app.registry.createModel(
         'ingredient',
-<<<<<<< HEAD
-       { name: 'string' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db'}
->>>>>>> 9543be6... Update eslint infrastructure
+       {name: 'string'}
       );
-      app.model(ingredient, { dataSource: 'db' });
+      app.model(ingredient, {dataSource: 'db'});
 
       var photo = app.registry.createModel(
         'photo',
-<<<<<<< HEAD
-        { name: 'string' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'}
       );
-      app.model(photo, { dataSource: 'db' });
+      app.model(photo, {dataSource: 'db'});
 
       recipe.referencesMany(ingredient);
       // contrived example for test:
@@ -1514,63 +1442,38 @@ describe('relations - integration', function() {
     before(function defineModels() {
       var Book = app.registry.createModel(
         'Book',
-<<<<<<< HEAD
-        { name: 'string' },
-        { plural: 'books' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db',
-        plural: 'books'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'},
+        {plural: 'books'}
       );
-      app.model(Book, { dataSource: 'db' });
+      app.model(Book, {dataSource: 'db'});
 
       var Page = app.registry.createModel(
         'Page',
-<<<<<<< HEAD
-        { name: 'string' },
-        { plural: 'pages' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db',
-        plural: 'pages'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'},
+        {plural: 'pages'}
       );
-      app.model(Page, { dataSource: 'db' });
+      app.model(Page, {dataSource: 'db'});
 
       var Image = app.registry.createModel(
         'Image',
-<<<<<<< HEAD
-        { name: 'string' },
-        { plural: 'images' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db',
-        plural: 'images'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'},
+        {plural: 'images'}
       );
-      app.model(Image, { dataSource: 'db' });
+      app.model(Image, {dataSource: 'db'});
 
       var Note = app.registry.createModel(
         'Note',
-<<<<<<< HEAD
-        { text: 'string' },
-        { plural: 'notes' }
-=======
-        {properties: {text: 'string'}, dataSource: 'db',
-        plural: 'notes'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {text: 'string'},
+        {plural: 'notes'}
       );
-      app.model(Note, { dataSource: 'db' });
+      app.model(Note, {dataSource: 'db'});
 
       var Chapter = app.registry.createModel(
         'Chapter',
-<<<<<<< HEAD
-        { name: 'string' },
-        { plural: 'chapters' }
-=======
-        {properties: {name: 'string'}, dataSource: 'db',
-          plural: 'chapters'}
->>>>>>> 9543be6... Update eslint infrastructure
+        {name: 'string'},
+        {plural: 'chapters'}
       );
-      app.model(Chapter, { dataSource: 'db' });
+      app.model(Chapter, {dataSource: 'db'});
 
       Book.hasMany(Page);
       Book.hasMany(Chapter);

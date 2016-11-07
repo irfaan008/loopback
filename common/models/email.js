@@ -18,7 +18,7 @@
  'use strict';
  var g = require('../../lib/globalize');
 
-module.exports = function(Email) {
+ module.exports = function(Email) {
   /**
    * Send an email with the given `options`.
    *
@@ -45,14 +45,14 @@ module.exports = function(Email) {
    * @param {Function} callback Called after the e-mail is sent or the sending failed
    */
 
-  Email.send = function() {
-    throw new Error(g.f('You must connect the {{Email}} Model to a {{Mail}} connector'));
-  };
+   Email.send = function() {
+     throw new Error(g.f('You must connect the {{Email}} Model to a {{Mail}} connector'));
+   };
 
   /**
    * A shortcut for Email.send(this).
    */
-  Email.prototype.send = function() {
-    throw new Error(g.f('You must connect the {{Email}} Model to a {{Mail}} connector'));
-  };
-};
+   Email.prototype.send = function() {
+     throw new Error(g.f('You must connect the {{Email}} Model to a {{Mail}} connector'));
+   };
+ };

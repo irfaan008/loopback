@@ -615,8 +615,8 @@ describe('app', function() {
     var app, db, MyTestModel;
     beforeEach(function() {
       app = loopback();
-      app.set('remoting', { errorHandler: { debug: true, log: false }});
-      db = loopback.createDataSource({ connector: loopback.Memory });
+      app.set('remoting', {errorHandler: {debug: true, log: false}});
+      db = loopback.createDataSource({connector: loopback.Memory});
       MyTestModel = app.registry.createModel('MyTestModel');
     });
 
@@ -629,7 +629,7 @@ describe('app', function() {
     });
 
     it('uses singular name as app.remoteObjects() key', function() {
-      var Color = PersistedModel.extend('color', { name: String });
+      var Color = PersistedModel.extend('color', {name: String});
       app.model(Color);
       Color.attachTo(db);
       expect(app.remoteObjects()).to.eql({color: Color});
@@ -692,13 +692,13 @@ describe('app', function() {
     });
 
     it('accepts null dataSource', function(done) {
-      app.model(MyTestModel, { dataSource: null });
+      app.model(MyTestModel, {dataSource: null});
       expect(MyTestModel.dataSource).to.eql(null);
       done();
     });
 
     it('accepts false dataSource', function(done) {
-      app.model(MyTestModel, { dataSource: false });
+      app.model(MyTestModel, {dataSource: false});
       expect(MyTestModel.getDataSource()).to.eql(null);
       done();
     });
@@ -725,16 +725,16 @@ describe('app', function() {
 
       assert(!previousModel || !previousModel.dataSource);
       var TestModel = app.registry.createModel('TestModel');
-      app.model(TestModel, { dataSource: 'db' });
+      app.model(TestModel, {dataSource: 'db'});
       expect(app.models.TestModel.dataSource).to.equal(app.dataSources.db);
     });
   });
 
   describe('app.models', function() {
     it('is unique per app instance', function() {
-      app.dataSource('db', { connector: 'memory' });
+      app.dataSource('db', {connector: 'memory'});
       var Color = app.registry.createModel('Color');
-      app.model(Color, { dataSource: 'db' });
+      app.model(Color, {dataSource: 'db'});
       expect(app.models.Color).to.equal(Color);
       var anotherApp = loopback();
       expect(anotherApp.models.Color).to.equal(undefined);
@@ -768,7 +768,7 @@ describe('app', function() {
     });
 
     it('adds app reference to the data source object', function() {
-      app.dataSource('ds', { connector: 'memory' });
+      app.dataSource('ds', {connector: 'memory'});
       expect(app.datasources.ds.app).to.not.equal(undefined);
       expect(app.datasources.ds.app).to.equal(app);
     });

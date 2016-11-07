@@ -14,15 +14,9 @@ var schema = {
   name: String,
 };
 
-<<<<<<< HEAD
-app.dataSource('db', { connector: 'memory' });
+app.dataSource('db', {connector: 'memory'});
 var Color = app.registry.createModel('color', schema);
-app.model(Color, { dataSource: 'db' });
-=======
-var Color = app.model('color', schema);
-
-app.dataSource('db', {adapter: 'memory'}).attach(Color);
->>>>>>> 9543be6... Update eslint infrastructure
+app.model(Color, {dataSource: 'db'});
 
 Color.create({name: 'red'});
 Color.create({name: 'green'});

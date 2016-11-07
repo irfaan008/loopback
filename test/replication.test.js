@@ -1015,8 +1015,8 @@ describe('Replication / Change APIs', function() {
       givenReplicatedInstance(function(err, inst) {
         if (err) return done(err);
         SourceModel.upsertWithWhere(
-          { name: inst.name },
-          { name: 'updated' },
+          {name: inst.name},
+          {name: 'updated'},
           function(err) {
             if (err) return done(err);
             assertChangeRecordedForId(inst.id, done);

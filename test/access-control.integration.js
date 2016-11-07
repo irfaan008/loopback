@@ -147,7 +147,7 @@ describe('access control - integration', function() {
   });
 
   describe('/banks', function() {
-    var SPECIAL_USER = { email: 'special@test.test', password: 'test' };
+    var SPECIAL_USER = {email: 'special@test.test', password: 'test'};
 
     // define dynamic role that would only grant access when the authenticated user's email is equal to
     // SPECIAL_USER's email

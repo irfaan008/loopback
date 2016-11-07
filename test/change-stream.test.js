@@ -8,8 +8,8 @@ describe('PersistedModel.createChangeStream()', function() {
   describe('configured to source changes locally', function() {
     before(function() {
       var test = this;
-      var app = loopback({ localRegistry: true });
-      var ds = app.dataSource('ds', { connector: 'memory' });
+      var app = loopback({localRegistry: true});
+      var ds = app.dataSource('ds', {connector: 'memory'});
       var Score = app.registry.createModel('Score');
       this.Score = app.model(Score, {
         dataSource: 'ds',

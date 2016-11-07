@@ -382,7 +382,7 @@ describe('AccessToken', function() {
       // Overwrite User settings - enable eternal tokens
       Token.app.models.User.settings.allowEternalTokens = true;
 
-      Token.create({ userId: '123', ttl: -1 }, function(err, token) {
+      Token.create({userId: '123', ttl: -1}, function(err, token) {
         if (err) return done(err);
         token.validate(function(err, isValid) {
           if (err) return done(err);
@@ -551,7 +551,7 @@ describe('app.enableAuth()', function() {
       saveUninitialized: true,
       resave: true,
     }));
-    app.use(loopback.token({ model: Token }));
+    app.use(loopback.token({model: Token}));
     app.get('/', function(req, res) { res.send('OK'); });
     app.use(loopback.rest());
 
@@ -656,14 +656,14 @@ function createTestApp(testToken, settings, done) {
 }
 
 function givenLocalTokenModel() {
-  var app = loopback({ localRegistry: true, loadBuiltinModels: true });
-  app.dataSource('db', { connector: 'memory' });
+  var app = loopback({localRegistry: true, loadBuiltinModels: true});
+  app.dataSource('db', {connector: 'memory'});
 
   var User = app.registry.getModel('User');
-  app.model(User, { dataSource: 'db' });
+  app.model(User, {dataSource: 'db'});
 
   var Token = app.registry.getModel('AccessToken');
-  app.model(Token, { dataSource: 'db' });
+  app.model(Token, {dataSource: 'db'});
 
   return Token;
 }

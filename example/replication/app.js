@@ -6,11 +6,11 @@
 'use strict';
 var loopback = require('../../');
 var app = loopback();
-var db = app.dataSource('db', { connector: 'memory' });
-var Color = app.registry.createModel('color', {}, { trackChanges: true });
-app.model(Color, { dataSource: 'db' });
-var Color2 = app.registry.createModel('color2', {}, { trackChanges: true });
-app.model(Color2, { dataSource: 'db' });
+var db = app.dataSource('db', {connector: 'memory'});
+var Color = app.registry.createModel('color', {}, {trackChanges: true});
+app.model(Color, {dataSource: 'db'});
+var Color2 = app.registry.createModel('color2', {}, {trackChanges: true});
+app.model(Color2, {dataSource: 'db'});
 var target = Color2;
 var source = Color;
 var SPEED = process.env.SPEED || 100;

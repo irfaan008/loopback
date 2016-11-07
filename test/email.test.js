@@ -40,8 +40,8 @@ describe('Email connector', function() {
   });
 
   it('should set up a aliased transport for SMTP', function() {
-    var connector = new MailConnector({ transport:
-      { type: 'smtp', service: 'ses-us-east-1', alias: 'ses-smtp' },
+    var connector = new MailConnector({transport:
+      {type: 'smtp', service: 'ses-us-east-1', alias: 'ses-smtp'},
     });
 
     assert(connector.transportForName('ses-smtp'));
