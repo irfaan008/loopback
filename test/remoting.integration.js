@@ -10,6 +10,7 @@ var path = require('path');
 var SIMPLE_APP = path.join(__dirname, 'fixtures', 'simple-integration-app');
 var app = require(path.join(SIMPLE_APP, 'server/server.js'));
 var assert = require('assert');
+var expect = require('chai').expect;
 
 describe('remoting - integration', function() {
   lt.beforeEach.withApp(app);
@@ -302,6 +303,7 @@ function findClass(name) {
 }
 
 function getFormattedMethodsExcludingRelations(methods) {
+  var result;
   return result = methods.filter(function(m) {
     return m.name.indexOf('__') === -1;
   })
@@ -314,6 +316,7 @@ function getFormattedMethodsExcludingRelations(methods) {
 }
 
 function getFormattedScopeMethods(methods) {
+  var result;
   return result = methods.filter(function(m) {
     return m.name.indexOf('__') === 0;
   })
@@ -326,6 +329,7 @@ function getFormattedScopeMethods(methods) {
 }
 
 function getFormattedPrototypeMethods(methods) {
+  var result;
   return result = methods.filter(function(m) {
     return m.name.indexOf('prototype.__') === 0;
   })

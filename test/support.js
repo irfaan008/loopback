@@ -8,15 +8,15 @@
  */
 
 'use strict';
-var assert = require('assert');
-var expect = require('chai').expect;
-var loopback = require('../');
-var memoryConnector = loopback.Memory;
-var GeoPoint = loopback.GeoPoint;
-var app = null;
-var TaskEmitter = require('strong-task-emitter');
-var request = require('supertest');
-var RemoteObjects = require('strong-remoting');
+global.assert = require('assert');
+global.expect = require('chai').expect;
+global.loopback = require('../');
+global.memoryConnector = loopback.Memory;
+global.GeoPoint = loopback.GeoPoint;
+global.app = null;
+global.TaskEmitter = require('strong-task-emitter');
+global.request = require('supertest');
+global.RemoteObjects = require('strong-remoting');
 
 // Speed up the password hashing algorithm
 // for tests using the built-in User model
@@ -26,7 +26,7 @@ beforeEach(function() {
   this.app = app = loopback();
 });
 
-var assertValidDataSource = function(dataSource) {
+global.assertValidDataSource = function(dataSource) {
   // has methods
   assert.isFunc(dataSource, 'createModel');
   assert.isFunc(dataSource, 'discoverModelDefinitions');
