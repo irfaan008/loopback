@@ -98,7 +98,7 @@ module.exports = function(Role) {
       }
 
       roleModel.roleMappingModel.find({
-        where: {roleId: this.id, principalType: principalType},
+        where: {roleId: model.id, principalType: principalType},
       }, function(err, mappings) {
         var ids;
         if (err) {
