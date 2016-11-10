@@ -572,7 +572,6 @@ module.exports = function(User) {
         err.code = 'EMAIL_NOT_FOUND';
         return cb(err);
       }
-
       // create a short lived access token for temp login to change password
       // TODO(ritch) - eventually this should only allow password change
       if (UserModel.settings.emailVerificationRequired && !user.emailVerified) {
@@ -581,17 +580,6 @@ module.exports = function(User) {
         err.code = 'RESET_FAILED_EMAIL_NOT_VERIFIED';
         return cb(err);
       }
-
-      // var AccessToken = UserModel.relations.accessTokens.modelTo;
-      // AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
-      //   tokens.forEach(function(token) {
-      //     AccessToken.destroyById(token.id, function(err, info) {
-      //       if (err) return cb(err);
-      //     });
-      //   });
-      // });
-
-
 
       user.accessTokens.create({ ttl: ttl }, function(err, accessToken) {
         if (err) {

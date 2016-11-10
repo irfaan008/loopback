@@ -1151,109 +1151,6 @@ describe('User', function() {
       }
     });
 
-    it('invalidates session when password is reset', function(done) {
-      var email = validCredentialsEmailVerified.email;
-      var password = validCredentialsEmailVerified.password;
-      var usersId, tempToken;
-
-      async.series([
-        function(next) {
-          User.login({ email: email, password: password }, function(err, accessToken1) {
-            if (err) return next(err);
-            assert(accessToken1);
-            usersId = accessToken1.userId;
-            next();
-          });
-        },
-        function(next) {
-          User.login({ email: email, password: password }, function(err, accessToken2) {
-            if (err) return next(err);
-            assert(accessToken2);
-
-            var calledBack = false;
-            User.resetPassword({ email: email }, function() {
-              calledBack = true;
-            });
-            User.once('resetPasswordRequest', function(info) {
-              assert(info.email);
-              assert(info.accessToken);
-              assert.equal(info.accessToken.ttl / 60, 15);
-              assert(calledBack);
-              tempToken = info.accessToken.id;
-              next();
-            });
-          });
-        },
-        function(next) {
-          AccessToken.find({ where: { userId: usersId }}, function(err, tokens) {
-            if (err) return next (err);
-              //The only AccessToken available is the one from resetting the password
-              //with ttl of 900 seconds.
-            expect(tokens.length).to.equal(1);
-            expect(tokens[0].id).to.equal(tempToken);
-            expect(tokens[0].ttl).to.equal(900);
-            next();
-          });
-        },
-      ], function(err) {
-        if (err) return done(err);
-        done();
-      });
-    });
-
-     it('preserves other user sessions if their password is  untouched', function(done) {
-      var user1, user2;
-       async.series([
-         function(next) {
-           User.create({ email: 'user1@example.com', password: 'u1pass' }, function(err, u1) {
-             if (err) return done(err);
-             User.create({ email: 'user2@example.com', password: 'u2pass' }, function(err, u2) {
-               if (err) return done(err);
-               user1 = u1;
-               user2 = u2;
-            //   console.log(user1, user2);
-               next();
-             });
-           });
-         },
-         function(next) {
-           User.login({ email: 'user1@example.com', password: 'u1pass' }, function(err, accessToken1) {
-             User.login({ email: 'user2@example.com', password: 'u2pass' }, function(err, accessToken2) {
-               assert(accessToken1.userId);
-               assert(accessToken2.userId);
-               next();
-             });
-           });
-         },
-         function(next) {
-           User.resetPassword({ email: 'user2@example.com', password: 'u2NewPass'  }, function(err, info) {
-             if (err) return next(err);
-             calledBack = true;
-           });
-           User.once('resetPasswordRequest', function(info) {
-             console.log(info)
-             assert(info.email);
-             assert(info.accessToken);
-             assert.equal(info.accessToken.ttl / 60, 15);
-             next();
-           });
-         },
-         function(next) {
-           AccessToken.find({ where: { userId: user1.id }}, function(err, tokens1) {
-             if (err) return next(err);
-             AccessToken.find({ where: { userId: user2.id }}, function(err, tokens2) {
-               if (err) return next(err);
-                 expect(tokens1.length).to.equal(1);
-                 expect(tokens2.length).to.equal(0);
-                 next();
-             });
-           });
-         },
-       ], function(err) {
-         done();
-       });
-     });
-
     it('Logout a user by providing the current accessToken id (over rest)', function(done) {
       login(logout);
       function login(fn) {
@@ -2392,6 +2289,105 @@ describe('User', function() {
 
       User.resetPassword({ email: email }, function(err) {
         if (err) return done (err);
+        done();
+      });
+    });
+  });
+
+  describe('Session validation after password reset', function() {
+    it('invalidates session when password is reset', function(done) {
+      var email = 'abcd@example.com';
+      var password = 'originalPass';
+      var user, tempToken;
+
+      async.series([
+        function createOriginalAccount(next) {
+          User.create({ email: email, password: password }, function(err, userInstance) {
+            if (err) return next(err);
+            user = userInstance;
+            next();
+          });
+        },
+        function(next) {
+          User.login({ email: email, password: password }, function(err, accessToken1) {
+            if (err) return next(err);
+            assert(accessToken1);
+            next();
+          });
+        },
+        function(next) {
+          User.login({ email: email, password: password }, function(err, accessToken2) {
+            if (err) return next(err);
+            assert(accessToken2);
+            next();
+          });
+        },
+        function(next) {
+          user.replaceAttributes({'email': email, password: 'newPass'}, function(err, user2) {
+            if (err) return next(err);
+            assert(user2);
+            next();
+          });
+        },
+        function(next) {
+          AccessToken.find({ where: { userId: user.id }}, function(err, tokens) {
+            if (err) return next (err);
+              //There should be no accessTokens as the password reset step
+              // is skipped here. Password is directly updated.
+             expect(tokens.length).to.equal(0);
+            next();
+          });
+        },
+      ], function(err) {
+        if (err) return done(err);
+        done();
+      });
+    });
+
+    it('preserves other user sessions if their password is  untouched', function(done) {
+      var user1, user2, user1Token;
+      async.series([
+        function(next) {
+          User.create({ email: 'user1@example.com', password: 'u1pass' }, function(err, u1) {
+            if (err) return done(err);
+            User.create({ email: 'user2@example.com', password: 'u2pass' }, function(err, u2) {
+              if (err) return done(err);
+              user1 = u1;
+              user2 = u2;
+              next();
+            });
+          });
+        },
+        function(next) {
+          User.login({ email: 'user1@example.com', password: 'u1pass' }, function(err, at1) {
+            User.login({ email: 'user2@example.com', password: 'u2pass' }, function(err, at2) {
+              assert(at1.userId);
+              assert(at2.userId);
+              user1Token = at1.id;
+              next();
+            });
+          });
+        },
+        function(next) {
+          user2.replaceAttributes({'email': user2.email, password: 'newPass'}, function(err, user2) {
+            if (err) return next(err);
+            assert(user2);
+            next();
+          });
+        },
+        function(next) {
+          AccessToken.find({ where: { userId: user1.id }}, function(err, tokens1) {
+            if (err) return next(err);
+            AccessToken.find({ where: { userId: user2.id }}, function(err, tokens2) {
+              if (err) return next(err);
+              expect(tokens1.length).to.equal(1);
+              expect(tokens2.length).to.equal(0);
+              assert.equal(tokens1[0].id, user1Token);
+              next();
+            });
+          });
+        },
+      ], function(err) {
         done();
       });
     });
